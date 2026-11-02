@@ -1,2 +1,2 @@
-# learning-ai-engineering-from-scratch
-Learning building AI projects form scratch. Learning from concepts to building and deploying AI projects for others
+#TournamentLab
+TournamentLab, a robust Python CLI that handles real tournament rules, rejected results, rankings, persistence and an end-of-season champion report.
