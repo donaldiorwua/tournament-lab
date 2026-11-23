@@ -20,7 +20,7 @@ def generate_fixtures(teams):
 
     Raises:
         TypeError: If teams is not a list or contains non-dictionary items.
-        ValueError: If the number of teams is outside the range of 4–8,
+        ValueError: If the number of teams is outside the range of 4-8,
             a team ID is missing, or duplicate team IDs are found.
     """
     fixtures = []
@@ -61,3 +61,65 @@ def generate_fixtures(teams):
             fixtures.append(fixture)
     
     return fixtures
+
+
+def record_score(fixtures, fixture_id, home_score, away_score):
+    """
+    Record the result of a pending fixture.
+
+    Finds a fixture by its ID, validates its status and scores,
+    then updates both scores and changes its status to "played".
+
+    All validations are performed before modifying the fixture
+    to prevent partial updates or accidental changes.
+
+    Args:
+        fixtures (list): A list of fixture dictionaries.
+        fixture_id (str): The unique ID of the fixture to update.
+        home_score (int): The home team's final score.
+        away_score (int): The away team's final score.
+
+    Returns:
+        dict: The updated fixture dictionary.
+
+    Raises:
+        TypeError: If fixtures is not a list, a fixture is not a
+            dictionary, or either score is not an exact integer.
+        ValueError: If the fixture ID does not exist, the fixture
+            is not pending, or either score is negative.
+    """
+    if not isinstance(fixtures, list):
+        raise TypeError("fixtures must be a list of dictionaries")
+
+    if not all(isinstance(fixture, dict) for fixture in fixtures):
+        raise TypeError("Each fixture must be a dictionary")
+    
+    if not all("id" in fixture for fixture in fixtures):
+        raise ValueError("Every team must have an ID")
+    
+    if type(home_score) is not int or type(away_score) is not int:
+        raise TypeError("score must be a valid integer, boolean values are not allowed")
+    
+    if home_score < 0 or away_score < 0:
+        raise ValueError("negative scores are not allowed")
+    
+    fixture = None
+    for match in fixtures:
+        if match["id"] == fixture_id:
+            fixture = match
+            break
+
+    if fixture is None:
+        raise ValueError("fixture_id does not exist")
+    
+    if fixture["status"] == "played":
+        raise ValueError("Fixture already played")
+    
+    if fixture["status"] != "pending":
+        raise ValueError("only pending fixtures can be scored")
+    
+    fixture["home_score"] = home_score
+    fixture["away_score"] = away_score
+    fixture["status"] = "played"
+
+    return fixture
